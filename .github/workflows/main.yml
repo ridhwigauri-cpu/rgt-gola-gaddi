@@ -1,5 +1,7 @@
 name: Build RGT APKs
-
+concurrency:
+  group: rgt-build
+  cancel-in-progress: true
 on:
   push:
     branches: [ main ]
