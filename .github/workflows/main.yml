@@ -18,12 +18,30 @@ jobs:
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
+
+      - name: Setup signing key
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/rgt-upload-key.jks
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/android/app/rgt-upload-key.jks"
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}"
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
+          } > android/key.properties
+
       - run: flutter pub get
-      - name: Kisan APK
-        run: flutter build apk --release --flavor kisan --dart-define=APP=kisan
+
+      - name: Kisan APK + AAB
+        run: |
+          flutter build apk --release --flavor kisan --dart-define=APP=kisan
+          flutter build appbundle --release --flavor kisan --dart-define=APP=kisan
+
       - name: Admin APK
         run: flutter build apk --release --flavor admin --dart-define=APP=admin
+
       - uses: actions/upload-artifact@v4
         with:
-          name: rgt-apks
-          path: build/app/outputs/flutter-apk/*.apk
+          name: rgt-signed
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/kisanRelease/*.aab
