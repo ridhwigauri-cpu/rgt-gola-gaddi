@@ -561,12 +561,23 @@ class _AdsScreenState extends State<AdsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // poster PORTRAIT me — poora dikhe, kate nahi
               if (img.isNotEmpty)
-                Image.network(img,
-                    height: 170,
+                AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: Container(
+                    color: const Color(0xFFF3F5EF),
                     width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const SizedBox()),
+                    child: Image.network(
+                      img,
+                      fit: BoxFit.contain, // poora poster andar
+                      errorBuilder: (_, __, ___) => const Center(
+                        child: Icon(Icons.broken_image_outlined,
+                            size: 40, color: RgtColors.grey),
+                      ),
+                    ),
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
