@@ -1,0 +1,38 @@
+name: Build Kisan APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+      - name: Setup signing key
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/rgt-upload-key.jks
+          {
+            echo "storeFile=$GITHUB_WORKSPACE/android/app/rgt-upload-key.jks"
+            echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}"
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
+          } > android/key.properties
+      - run: flutter pub get
+      - run: flutter build apk --release --flavor kisan --dart-define=APP=kisan
+      - run: flutter build appbundle --release --flavor kisan --dart-define=APP=kisan
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kisan-signed
+          path: |
+            build/app/outputs/flutter-apk/app-kisan-release.apk
+            build/app/outputs/bundle/kisanRelease/app-kisan-release.aab
