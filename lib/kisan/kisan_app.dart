@@ -61,7 +61,64 @@ class _KisanHomeState extends State<KisanHome> {
     }
   }
 
-  /// Tab bar — footer ke UPAR, icon + label, active tab utha hua
+  /// Tab bar — footer ke UPAR, do row me (4 + 4), bade icon
+  Widget _tabItem(int i) {
+    final on = i == tab;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => tab = i),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+          decoration: BoxDecoration(
+            gradient: on
+                ? const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [RgtColors.greenLight, RgtColors.green],
+                  )
+                : null,
+            color: on ? null : Colors.white,
+            borderRadius: BorderRadius.circular(13),
+            border: Border.all(color: on ? RgtColors.green : RgtColors.line),
+            boxShadow: on
+                ? [
+                    BoxShadow(
+                      color: RgtColors.green.withOpacity(0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icons[i],
+                  size: 24, color: on ? Colors.white : RgtColors.green),
+              const SizedBox(height: 3),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  labels[i],
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    height: 1.1,
+                    fontWeight: on ? FontWeight.w700 : FontWeight.w600,
+                    color: on ? Colors.white : RgtColors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _tabBar() {
     return Container(
       decoration: BoxDecoration(
@@ -79,68 +136,14 @@ class _KisanHomeState extends State<KisanHome> {
           ),
         ],
       ),
-      child: SizedBox(
-        height: 62,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-          itemCount: labels.length,
-          itemBuilder: (context, i) {
-            final on = i == tab;
-            return GestureDetector(
-              onTap: () => setState(() => tab = i),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
-                width: 68,
-                margin: const EdgeInsets.symmetric(horizontal: 2),
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: on
-                      ? const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [RgtColors.greenLight, RgtColors.green],
-                        )
-                      : null,
-                  color: on ? null : Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: on ? RgtColors.green : RgtColors.line,
-                  ),
-                  boxShadow: on
-                      ? [
-                          BoxShadow(
-                            color: RgtColors.green.withOpacity(0.35),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(icons[i],
-                        size: 21,
-                        color: on ? Colors.white : RgtColors.green),
-                    const SizedBox(height: 2),
-                    Text(
-                      labels[i],
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 9.5,
-                        height: 1.1,
-                        fontWeight: on ? FontWeight.w700 : FontWeight.w500,
-                        color: on ? Colors.white : RgtColors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
+      padding: const EdgeInsets.fromLTRB(5, 6, 5, 6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(children: [for (var i = 0; i < 4; i++) _tabItem(i)]),
+          const SizedBox(height: 6),
+          Row(children: [for (var i = 4; i < labels.length; i++) _tabItem(i)]),
+        ],
       ),
     );
   }
