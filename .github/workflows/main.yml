@@ -17,6 +17,8 @@ jobs:
           cp -r $SRC/lib/. lib/
           cp -r $SRC/assets/. assets/
           cp $SRC/pubspec.yaml pubspec.yaml
+                    cp admin_app.dart lib/admin/admin_app.dart
+
           mkdir -p android/app/src/main/kotlin/com/rgt/golagaddi
           cp $SRC/android/app/src/main/kotlin/com/rgt/golagaddi/MainActivity.kt \
              android/app/src/main/kotlin/com/rgt/golagaddi/MainActivity.kt
