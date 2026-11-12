@@ -3,14 +3,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'config.dart';
 import 'theme.dart';
 
-/// 3D texture — halki diagonal lines + gloss (depth ke liye)
+/// 3D texture — halki diagonal lines + gloss
 class _TexPainter extends CustomPainter {
   final bool dark;
   const _TexPainter({this.dark = false});
   @override
   void paint(Canvas canvas, Size size) {
     final p = Paint()..strokeWidth = 1;
-    final step = 7.0;
+    const step = 7.0;
     for (double x = -size.height; x < size.width + size.height; x += step) {
       p.color = dark ? const Color(0x14FFFFFF) : const Color(0x0D1E2A1C);
       canvas.drawLine(Offset(x, size.height), Offset(x + size.height, 0), p);
@@ -38,26 +38,17 @@ class RgtHeader extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.28),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-          BoxShadow(
-            color: Colors.white.withOpacity(0.55),
-            blurRadius: 1,
-            offset: const Offset(0, -1),
-          ),
+              color: Colors.black.withOpacity(0.28),
+              blurRadius: 18,
+              offset: const Offset(0, 6)),
         ],
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
         child: Stack(
           children: [
-            // banner photo
             Image.asset('assets/images/banner.jpg',
                 width: double.infinity, fit: BoxFit.fitWidth),
-
-            // 3D depth — neeche gehra gradient + upar gloss
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -75,22 +66,13 @@ class RgtHeader extends StatelessWidget {
                 ),
               ),
             ),
-
-            // texture
             Positioned.fill(child: CustomPaint(painter: const _TexPainter())),
-
-            // rim light — upar patli chamak
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: 1.4,
-                color: Colors.white.withOpacity(0.65),
-              ),
+              child: Container(height: 1.4, color: Colors.white.withOpacity(0.65)),
             ),
-
-            // 📍 location
             Positioned(
               right: 8,
               bottom: 7,
@@ -108,14 +90,12 @@ class RgtHeader extends StatelessWidget {
                       ],
                     ),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: Colors.white.withOpacity(0.35), width: 0.8),
+                    border: Border.all(color: Colors.white.withOpacity(0.35), width: 0.8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.35),
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
+                          color: Colors.black.withOpacity(0.35),
+                          blurRadius: 5,
+                          offset: const Offset(0, 2)),
                     ],
                   ),
                   child: const Text('📍 तेलहाड़ा मंडी · नालंदा, बिहार',
@@ -123,13 +103,10 @@ class RgtHeader extends StatelessWidget {
                           color: Colors.white,
                           fontSize: 10.5,
                           fontWeight: FontWeight.w600,
-                          shadows: [
-                            Shadow(blurRadius: 4, color: Colors.black54)
-                          ])),
+                          shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
                 ),
               ),
             ),
-
             if (onLogout != null)
               Positioned(
                 right: 9,
@@ -137,8 +114,7 @@ class RgtHeader extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onLogout,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -149,14 +125,12 @@ class RgtHeader extends StatelessWidget {
                         ],
                       ),
                       borderRadius: BorderRadius.circular(11),
-                      border: Border.all(
-                          color: Colors.white.withOpacity(0.55), width: 0.9),
+                      border: Border.all(color: Colors.white.withOpacity(0.55), width: 0.9),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.30),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
+                            color: Colors.black.withOpacity(0.30),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2)),
                       ],
                     ),
                     child: const Text('लॉगआउट',
@@ -164,9 +138,7 @@ class RgtHeader extends StatelessWidget {
                             color: Colors.white,
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
-                            shadows: [
-                              Shadow(blurRadius: 4, color: Colors.black54)
-                            ])),
+                            shadows: [Shadow(blurRadius: 4, color: Colors.black54)])),
                   ),
                 ),
               ),
@@ -177,7 +149,7 @@ class RgtHeader extends StatelessWidget {
   }
 }
 
-/// Footer — 3D textured bar (uplifted), logo + copyright
+/// Footer — 3D textured bar (uplifted)
 class RgtFooter extends StatelessWidget {
   const RgtFooter({super.key});
 
@@ -188,43 +160,35 @@ class RgtFooter extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.22),
-            blurRadius: 16,
-            offset: const Offset(0, -5),
-          ),
+              color: Colors.black.withOpacity(0.22),
+              blurRadius: 16,
+              offset: const Offset(0, -5)),
         ],
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         child: Stack(
           children: [
-            // base gradient — upar safed, neeche cream/gehra
             Container(
               padding: const EdgeInsets.fromLTRB(13, 11, 13, 11),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFFFFFFFF),
-                    Color(0xFFF6F8F1),
-                    Color(0xFFE4EADB),
-                  ],
+                  colors: [Color(0xFFFFFFFF), Color(0xFFF6F8F1), Color(0xFFE4EADB)],
                   stops: [0, 0.55, 1],
                 ),
               ),
               child: Row(
                 children: [
-                  // logo 3D badge
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
+                            color: Colors.black.withOpacity(0.25),
+                            blurRadius: 7,
+                            offset: const Offset(0, 3)),
                       ],
                     ),
                     child: Image.asset('assets/images/logo_round.png',
@@ -247,41 +211,29 @@ class RgtFooter extends StatelessWidget {
                                       offset: Offset(0, 1))
                                 ])),
                         Text('A Unit of Ridhwi Gauri Traders Pvt Ltd',
-                            style: TextStyle(
-                                fontSize: 9.5, color: Color(0xFF5C665C))),
+                            style: TextStyle(fontSize: 9.5, color: Color(0xFF5C665C))),
                         Text(AppConfig.copyright,
-                            style: TextStyle(
-                                fontSize: 9, color: Color(0xFF8E968C))),
+                            style: TextStyle(fontSize: 9, color: Color(0xFF8E968C))),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-
-            // texture + gloss
             Positioned.fill(
-              child: IgnorePointer(
-                child: CustomPaint(painter: const _TexPainter()),
-              ),
+              child: IgnorePointer(child: CustomPaint(painter: const _TexPainter())),
             ),
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: 1.4,
-                color: Colors.white.withOpacity(0.95),
-              ),
+              child: Container(height: 1.4, color: Colors.white.withOpacity(0.95)),
             ),
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: 1.2,
-                color: const Color(0xFFC9D2C2),
-              ),
+              child: Container(height: 1.2, color: const Color(0xFFC9D2C2)),
             ),
           ],
         ),
