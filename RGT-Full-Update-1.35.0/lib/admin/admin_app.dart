@@ -4,8 +4,8 @@ import '../core/api.dart';
 import '../core/speech.dart';
 import '../core/theme.dart';
 import '../core/widgets.dart';
-import 'admin_extra.dart';
 import '../kisan/weather_screen.dart';
+import 'admin_extra.dart';
 import 'admin_screens.dart';
 
 class AdminApp extends StatelessWidget {
@@ -61,7 +61,12 @@ class _AdminGateState extends State<AdminGate> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (user == null) {
-      return LoginScreen(onDone: (u) => setState(() => user = u));
+      return LoginScreen(
+        onDone: (u) {
+          setState(() => user = u);
+          Speech.say('आर जी टी ग्रुप में आपका स्वागत है');
+        },
+      );
     }
     return AdminHome(
       user: user!,
@@ -75,7 +80,7 @@ class _AdminGateState extends State<AdminGate> {
   }
 }
 
-/// Login — admin aur executive dono isi screen se (role server se aata hai)
+/// Login — admin aur executive dono isi screen se
 class LoginScreen extends StatefulWidget {
   final ValueChanged<Map<String, dynamic>> onDone;
   const LoginScreen({super.key, required this.onDone});
@@ -99,78 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', Api.token ?? '');
       widget.onDone((res['user'] as Map<String, dynamic>?) ?? res);
-      Speech.say('आर जी टी ग्रुप में आपका स्वागत है');
     } catch (e) {
       setState(() => error = e.toString());
     } finally {
       if (mounted) setState(() => busy = false);
     }
   }
-
-
-  Widget _tabItem(int i) {
-    final on = i == tab;
-    final c = colors[i];
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => tab = i),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-          decoration: BoxDecoration(
-            gradient: on
-                ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                    colors: [c.withOpacity(0.85), RgtColors.green])
-                : null,
-            color: on ? null : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: on ? RgtColors.green : RgtColors.line),
-            boxShadow: on
-                ? [BoxShadow(color: RgtColors.green.withOpacity(0.30),
-                    blurRadius: 6, offset: const Offset(0, 2))]
-                : null,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icons[i], size: 22, color: on ? Colors.white : c),
-              const SizedBox(height: 2),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(labels[i], maxLines: 1,
-                    style: TextStyle(fontSize: 10, height: 1.05,
-                        fontWeight: on ? FontWeight.w700 : FontWeight.w600,
-                        color: on ? Colors.white : RgtColors.grey)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _row(int from, int to) => Row(
-        children: [
-          for (var i = from; i < to; i++)
-            i < labels.length ? _tabItem(i) : const Spacer(),
-        ],
-      );
-
-  Widget _tabBar() => Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter,
-              colors: [Color(0xFFFCFDFA), Color(0xFFEEF2E9)]),
-          border: const Border(top: BorderSide(color: Colors.white, width: 1)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.10),
-              blurRadius: 10, offset: const Offset(0, -2))],
-        ),
-        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [_row(0, 3), _row(3, 6), _row(6, 9)],
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -267,20 +206,30 @@ class AdminHome extends StatefulWidget {
 
 class _AdminHomeState extends State<AdminHome> {
   int tab = 0;
+
   static const labels = [
     'डैशबोर्ड', 'किसानी', 'भाव', 'लीड्स', 'पूछताछ', 'मौसम', 'और',
   ];
+
   static const icons = <IconData>[
-    Icons.dashboard_outlined, Icons.agriculture, Icons.currency_rupee,
-    Icons.groups_outlined, Icons.forum_outlined, Icons.wb_sunny, Icons.more_horiz,
+    Icons.dashboard_outlined,
+    Icons.agriculture,
+    Icons.currency_rupee,
+    Icons.groups_outlined,
+    Icons.forum_outlined,
+    Icons.wb_sunny,
+    Icons.more_horiz,
   ];
 
   static const colors = <Color>[
-    RgtColors.green, RgtColors.greenMid, RgtColors.goldDark, RgtColors.blue,
-    RgtColors.purple, Color(0xFFFFA726), RgtColors.teal,
+    RgtColors.green,
+    RgtColors.greenMid,
+    RgtColors.goldDark,
+    RgtColors.blue,
+    RgtColors.purple,
+    Color(0xFFFFA726),
+    RgtColors.teal,
   ];
-
-  bool get isAdmin => (widget.user['role'] ?? '') == 'ADMIN';
 
   Widget _body() {
     switch (tab) {
@@ -300,6 +249,92 @@ class _AdminHomeState extends State<AdminHome> {
         return const AdminMoreScreen();
     }
   }
+
+  Widget _tabItem(int i) {
+    final on = i == tab;
+    final c = colors[i];
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => tab = i),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+          decoration: BoxDecoration(
+            gradient: on
+                ? LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [c.withOpacity(0.85), RgtColors.green],
+                  )
+                : null,
+            color: on ? null : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: on ? RgtColors.green : RgtColors.line),
+            boxShadow: on
+                ? [
+                    BoxShadow(
+                      color: RgtColors.green.withOpacity(0.30),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icons[i], size: 22, color: on ? Colors.white : c),
+              const SizedBox(height: 2),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  labels[i],
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 10,
+                    height: 1.05,
+                    fontWeight: on ? FontWeight.w700 : FontWeight.w600,
+                    color: on ? Colors.white : RgtColors.grey,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _row(int from, int to) => Row(
+        children: [
+          for (var i = from; i < to; i++)
+            i < labels.length ? _tabItem(i) : const Spacer(),
+        ],
+      );
+
+  Widget _tabBar() => Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFCFDFA), Color(0xFFEEF2E9)],
+          ),
+          border: const Border(top: BorderSide(color: Colors.white, width: 1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.10),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [_row(0, 3), _row(3, 6), _row(6, 9)],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
