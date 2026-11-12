@@ -1,23 +1,36 @@
-name: Build Kisan APK
+name: Build RGT APKs
 
 on:
-  workflow_dispatch:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Unpack source update
+        run: |
+          if [ -f RGT-Full-Update-1.35.0.zip ]; then
+            unzip -o RGT-Full-Update-1.35.0.zip -d .
+            echo "source zip unpacked"
+          else
+            echo "zip nahi mila — purana code se build hoga"
+          fi
+          ls lib/core lib/kisan lib/admin assets/images | head -30
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
           channel: 'stable'
+
       - name: Setup signing key
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/rgt-upload-key.jks
@@ -27,12 +40,20 @@ jobs:
             echo "keyAlias=${{ secrets.KEY_ALIAS }}"
             echo "keyPassword=${{ secrets.KEY_PASSWORD }}"
           } > android/key.properties
+
       - run: flutter pub get
-      - run: flutter build apk --release --flavor kisan --dart-define=APP=kisan
-      - run: flutter build appbundle --release --flavor kisan --dart-define=APP=kisan
+
+      - name: Kisan APK + AAB
+        run: |
+          flutter build apk --release --flavor kisan --dart-define=APP=kisan
+          flutter build appbundle --release --flavor kisan --dart-define=APP=kisan
+
+      - name: Admin APK
+        run: flutter build apk --release --flavor admin --dart-define=APP=admin
+
       - uses: actions/upload-artifact@v4
         with:
-          name: kisan-signed
+          name: rgt-signed
           path: |
-            build/app/outputs/flutter-apk/app-kisan-release.apk
-            build/app/outputs/bundle/kisanRelease/app-kisan-release.aab
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/kisanRelease/*.aab
