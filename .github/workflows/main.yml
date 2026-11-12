@@ -1,4 +1,5 @@
 name: Build RGT APKs
+
 on:
   push:
     branches: [ main ]
@@ -9,10 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Apply source update
+        run: |
+          SRC=RGT-Full-Update-1.35.0
+          cp -r $SRC/lib/. lib/
+          cp -r $SRC/assets/. assets/
+          cp $SRC/pubspec.yaml pubspec.yaml
+          mkdir -p android/app/src/main/kotlin/com/rgt/golagaddi
+          cp $SRC/android/app/src/main/kotlin/com/rgt/golagaddi/MainActivity.kt \
+             android/app/src/main/kotlin/com/rgt/golagaddi/MainActivity.kt
+          echo "--- files in place ---"
+          ls lib/core lib/kisan lib/admin
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.5'
