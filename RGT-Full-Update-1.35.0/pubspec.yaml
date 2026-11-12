@@ -1,0 +1,22 @@
+name: rgt_app
+description: RGT Gola Gaddi — Kisan aur Admin app (Flutter)
+publish_to: 'none'
+version: 1.35.0+39
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  url_launcher: ^6.2.5
+  shared_preferences: ^2.2.2
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
