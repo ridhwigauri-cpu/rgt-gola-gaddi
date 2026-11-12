@@ -1,7 +1,7 @@
 name: rgt_app
 description: RGT Gola Gaddi — Kisan aur Admin app (Flutter)
 publish_to: 'none'
-version: 1.32.2+36
+version: 1.35.0+39
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
